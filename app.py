@@ -44,9 +44,38 @@ st.caption('Prototipo académico · Mercado Airbnb de Madrid · Precio de refere
 
 with st.form('pricing_form'):
     st.subheader('Características del alojamiento')
-    district = st.selectbox('Distrito', sorted(df['neighbourhood_group_cleansed'].dropna().astype(str).unique()))
-    barrios = sorted(df.loc[df['neighbourhood_group_cleansed'].astype(str)==district, 'neighbourhood_cleansed'].dropna().astype(str).unique())
-    neighbourhood = st.selectbox('Barrio', barrios if barrios else sorted(df['neighbourhood_cleansed'].dropna().astype(str).unique()))
+    # Listado de distritos disponibles
+districts = sorted(
+    df["neighbourhood_group_cleansed"]
+    .dropna()
+    .astype(str)
+    .unique()
+)
+
+# Selector de distrito
+district = st.selectbox(
+    "Distrito",
+    districts,
+    key="district"
+)
+
+# Los barrios se recalculan en función del distrito seleccionado
+barrios = sorted(
+    df.loc[
+        df["neighbourhood_group_cleansed"].astype(str) == district,
+        "neighbourhood_cleansed"
+    ]
+    .dropna()
+    .astype(str)
+    .unique()
+)
+
+# Selector dependiente de barrio
+neighbourhood = st.selectbox(
+    "Barrio",
+    barrios,
+    key=f"neighbourhood_{district}"
+)
 
     property_type = st.selectbox('Tipo de propiedad', sorted(df['property_type'].dropna().astype(str).unique()))
     room_type = st.selectbox('Modalidad', sorted(df['room_type'].dropna().astype(str).unique()))
